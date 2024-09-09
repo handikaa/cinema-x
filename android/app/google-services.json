@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "1055858532267",
+    "project_id": "flix-id-course-3558b",
+    "storage_bucket": "flix-id-course-3558b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1055858532267:android:52642f158791da7736bcee",
+        "android_client_info": {
+          "package_name": "com.learning.flixId"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1055858532267-d2rmj6p3osos5cc1a9b9fs4ofaihftk9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdASLE0Y1AYl7EVj08txORUnXwuKGTcP8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1055858532267-d2rmj6p3osos5cc1a9b9fs4ofaihftk9.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1055858532267-4kjvg0itp5mi315k6q26ju2o9jjusc8f.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.learning.flix-Id"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

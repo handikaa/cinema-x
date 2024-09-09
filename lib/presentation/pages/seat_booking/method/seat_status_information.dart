@@ -1,0 +1,59 @@
+import '../../../misc/constants.dart';
+import '../../../misc/method.dart';
+import 'package:flutter/material.dart';
+
+Widget seatStatusInformation({double width = 30, double height = 30}) => Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          width: width,
+          height: height,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(5),
+          ),
+        ),
+        horizontalSpace(5),
+        const Text(
+          'Available',
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.white,
+          ),
+        ),
+        horizontalSpace(10),
+        Container(
+          width: width,
+          height: height,
+          decoration: BoxDecoration(
+            color: Colors.grey,
+            borderRadius: BorderRadius.circular(5),
+          ),
+        ),
+        horizontalSpace(5),
+        const Text(
+          'Reserved',
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.white,
+          ),
+        ),
+        horizontalSpace(10),
+        Container(
+          width: width,
+          height: height,
+          decoration: BoxDecoration(
+            color: saffron,
+            borderRadius: BorderRadius.circular(5),
+          ),
+        ),
+        horizontalSpace(5),
+        const Text(
+          'Selected',
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.white,
+          ),
+        ),
+      ],
+    );
