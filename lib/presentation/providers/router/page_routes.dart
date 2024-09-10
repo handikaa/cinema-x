@@ -1,4 +1,5 @@
 import 'package:flix_id/presentation/pages/update_profile/update_profile_page.dart';
+import 'package:flix_id/presentation/pages/welcome_page/welcome_page.dart';
 
 import '../../../domain/movie_detail.dart';
 import '../../pages/booking_confirmation/booking_confirmatio_page.dart';
@@ -84,6 +85,16 @@ Raw<GoRouter> router(RouterRef ref) => GoRouter(
           path: '/update-profile',
           name: 'update-profile',
           builder: (context, state) => const UpdateProfilePage(),
+        ),
+        GoRoute(
+          path: '/welcome',
+          name: 'welcome',
+          builder: (context, state) => const WelcomePage(),
+        ),
+        GoRoute(
+          path: '/video-player',
+          name: 'video-player',
+          builder: (context, state) => const VideoPlayeTrailer(),
         ),
       ],
       initialLocation: '/',

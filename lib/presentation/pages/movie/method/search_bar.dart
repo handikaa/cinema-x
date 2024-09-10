@@ -1,7 +1,6 @@
-import '../../../misc/constants.dart';
 import 'package:flutter/material.dart';
 
-Widget searchBar(BuildContext context) => Row(
+Widget searchBar(BuildContext context, ThemeData theme) => Row(
       children: [
         Expanded(
           child: Container(
@@ -32,7 +31,7 @@ Widget searchBar(BuildContext context) => Row(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5),
                 ),
-                backgroundColor: saffron),
+                backgroundColor: theme.colorScheme.primary),
             child: const Icon(Icons.search, color: Colors.white, size: 30),
           ),
         )

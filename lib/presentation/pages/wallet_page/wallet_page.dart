@@ -1,11 +1,9 @@
-import 'package:flix_id/presentation/providers/user_data_provider/user_data_provider.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../misc/method.dart';
 import '../../providers/router/page_routes.dart';
 import '../../widgets/back_navigation_bar.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'method/recent_transaction.dart';
 import 'method/wallet_card.dart';
 

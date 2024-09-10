@@ -1,12 +1,13 @@
 import 'dart:math';
-import '../../../extensions/int_extension.dart';
-import '../../../misc/method.dart';
-import '../../../providers/user_data_provider/user_data_provider.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../extensions/int_extension.dart';
 import '../../../misc/assets.dart';
+import '../../../misc/method.dart';
 import '../../../providers/router/page_routes.dart';
+import '../../../providers/user_data_provider/user_data_provider.dart';
 
 List<String> photoList = [
   placeholder,
@@ -21,28 +22,17 @@ List<String> photoList = [
 Widget userInfo(WidgetRef ref, BuildContext context) => Padding(
       padding: const EdgeInsets.fromLTRB(24, 24, 24, 2),
       child: SizedBox(
-        height: 90,
+        height: 80,
         child: FittedBox(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircleAvatar(
-                radius: 40,
-                backgroundImage:
-                    ref.watch(userDataProvider).valueOrNull?.photoUrl != null
-                        ? NetworkImage(
-                            ref.watch(userDataProvider).valueOrNull!.photoUrl!)
-                        : AssetImage(
-                            photoList[Random().nextInt(photoList.length)],
-                          ),
-              ),
-              horizontalSpace(20),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     '${greetingText()}, ${ref.watch(userDataProvider).when(
-                          data: (user) => user?.name.split(' ').last ?? '',
+                          data: (user) => user?.name.split(' ').first ?? '',
                           error: (error, stackTrace) => '',
                           loading: () => '',
                         )}!',
@@ -83,6 +73,17 @@ Widget userInfo(WidgetRef ref, BuildContext context) => Padding(
                     ),
                   )
                 ],
+              ),
+              horizontalSpace(20),
+              CircleAvatar(
+                radius: 40,
+                backgroundImage:
+                    ref.watch(userDataProvider).valueOrNull?.photoUrl != null
+                        ? NetworkImage(
+                            ref.watch(userDataProvider).valueOrNull!.photoUrl!)
+                        : AssetImage(
+                            photoList[Random().nextInt(photoList.length)],
+                          ),
               ),
             ],
           ),

@@ -1,9 +1,8 @@
 import 'dart:io';
 import 'dart:math';
-
-import 'package:flix_id/domain/result.dart';
-import 'package:flix_id/presentation/extensions/build_extension_context.dart';
 import 'package:flix_id/presentation/providers/router/page_routes.dart';
+import 'package:flix_id/presentation/widgets/back_navigation_bar.dart';
+import 'package:flix_id/presentation/widgets/button/elevated_button_extra_lage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -14,6 +13,7 @@ import '../../misc/assets.dart';
 import '../../misc/constants.dart';
 import '../../misc/method.dart';
 import '../../providers/user_data_provider/user_data_provider.dart';
+import '../../widgets/textfield.dart';
 
 class UpdateProfilePage extends ConsumerStatefulWidget {
   const UpdateProfilePage({super.key});
@@ -23,6 +23,11 @@ class UpdateProfilePage extends ConsumerStatefulWidget {
 }
 
 class _UpdateProfilePageState extends ConsumerState<UpdateProfilePage> {
+  final ImagePicker picker = ImagePicker();
+  XFile? xfile;
+  TextEditingController emailC = TextEditingController();
+  TextEditingController nameC = TextEditingController();
+
   List<String> photoList = [
     placeholder,
     pp1,
@@ -33,16 +38,13 @@ class _UpdateProfilePageState extends ConsumerState<UpdateProfilePage> {
     pp6,
   ];
 
-  final ImagePicker picker = ImagePicker();
-  XFile? xfile;
-
   Future<XFile?> _cropImage(XFile image) async {
     final CroppedFile? croppedFile = await ImageCropper().cropImage(
       sourcePath: image.path,
       uiSettings: [
         AndroidUiSettings(
           toolbarTitle: 'Flix Id',
-          toolbarColor: backgroundColor,
+          toolbarColor: ThemeColor.darkBackground,
           toolbarWidgetColor: Colors.white,
           lockAspectRatio: true,
           cropStyle: CropStyle.circle,
@@ -80,83 +82,101 @@ class _UpdateProfilePageState extends ConsumerState<UpdateProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    User? user = ref.watch(userDataProvider).valueOrNull;
+    String? name = user?.name ?? '';
+    String email = user?.email ?? '';
+
+    nameC.text = name;
+    emailC.text = email;
     return Scaffold(
       body: ListView(
         children: [
-          Container(
-            width: 100,
-            height: 100,
-            decoration: BoxDecoration(
-              border: Border.all(width: 1, color: Colors.grey),
-              shape: BoxShape.circle,
-              image: DecorationImage(
-                image: xfile != null
-                    ? FileImage(
-                        File(xfile!.path),
-                      )
-                    : ref.watch(userDataProvider).valueOrNull?.photoUrl != null
-                        ? NetworkImage(
-                            ref.watch(userDataProvider).valueOrNull!.photoUrl!)
-                        : AssetImage(
-                            photoList[Random().nextInt(photoList.length)],
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+            child: Column(
+              children: [
+                BackNavigationBar(
+                  title: 'Profile',
+                  onTap: () => ref.read(routerProvider).pop(),
+                ),
+                verticalSpace(40),
+                Stack(
+                  children: [
+                    Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        border: Border.all(width: 1, color: Colors.grey),
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          image: xfile != null
+                              ? FileImage(
+                                  File(xfile!.path),
+                                )
+                              : ref
+                                          .watch(userDataProvider)
+                                          .valueOrNull
+                                          ?.photoUrl !=
+                                      null
+                                  ? NetworkImage(ref
+                                      .watch(userDataProvider)
+                                      .valueOrNull!
+                                      .photoUrl!)
+                                  : AssetImage(
+                                      photoList[
+                                          Random().nextInt(photoList.length)],
+                                    ),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: GestureDetector(
+                        onTap: () {
+                          pickImage();
+                        },
+                        child: const CircleAvatar(
+                          radius: 20,
+                          child: Icon(
+                            Icons.edit,
                           ),
-                fit: BoxFit.contain,
-              ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                verticalSpace(30),
+                FlixTextField(
+                  labelText: 'Email',
+                  controller: emailC,
+                ),
+                verticalSpace(30),
+                FlixTextField(
+                  labelText: 'Name',
+                  controller: nameC,
+                ),
+                verticalSpace(80),
+                SizedBox(
+                  width: double.infinity,
+                  child: CustomElevatedButton(
+                    text: 'Update Profile',
+                    buttonType: ButtonType.medium,
+                    onPressed: () async {
+                      await ref
+                          .read(userDataProvider.notifier)
+                          .uploadProfilePicture(
+                            user: user!,
+                            image: File(xfile!.path),
+                          );
+                      ref.read(routerProvider).pop();
+                    },
+                  ),
+                ),
+              ],
             ),
           ),
-          verticalSpace(30),
-          Column(
-            children: [
-              if (xfile != null)
-                ElevatedButton(
-                  style: const ButtonStyle(
-                    backgroundColor: WidgetStatePropertyAll(
-                      Colors.red,
-                    ),
-                  ),
-                  onPressed: () => setState(() {
-                    xfile = null;
-                  }),
-                  child: const Text(
-                    'delete image',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              ElevatedButton(
-                style: const ButtonStyle(
-                  backgroundColor: WidgetStatePropertyAll(
-                    saffron,
-                  ),
-                ),
-                onPressed: () => pickImage(),
-                child: const Text(
-                  'pick image',
-                  style: TextStyle(color: Colors.black),
-                ),
-              ),
-              ElevatedButton(
-                style: const ButtonStyle(
-                  backgroundColor: WidgetStatePropertyAll(
-                    saffron,
-                  ),
-                ),
-                onPressed: () async {
-                  User? user = ref.watch(userDataProvider).valueOrNull;
-                  var update = await ref
-                      .read(userDataProvider.notifier)
-                      .uploadProfilePicture(
-                        user: user!,
-                        image: File(xfile!.path),
-                      );
-                  ref.read(routerProvider).pop();
-                },
-                child: const Text(
-                  'update profile image',
-                  style: TextStyle(color: Colors.black),
-                ),
-              ),
-            ],
-          )
         ],
       ),
     );

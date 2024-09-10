@@ -6,10 +6,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../domain/movie_detail.dart';
 import '../../../domain/transaction.dart';
 import '../../extensions/build_extension_context.dart';
-import '../../misc/constants.dart';
 import '../../misc/method.dart';
 import '../../providers/router/page_routes.dart';
 import '../../widgets/back_navigation_bar.dart';
+import '../../widgets/button/elevated_button_extra_lage.dart';
 import 'method/screen_widget.dart';
 import 'method/seat_status_information.dart';
 
@@ -184,6 +184,8 @@ class _SeatBookingPageState extends ConsumerState<SeatBookingPage> {
   @override
   Widget build(BuildContext context) {
     final (movieDetail, transaction) = widget.transactionDetail;
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
     return Scaffold(
       body: ListView(
         children: [
@@ -196,7 +198,7 @@ class _SeatBookingPageState extends ConsumerState<SeatBookingPage> {
             ),
           ),
           verticalSpace(50),
-          seatStatusInformation(),
+          seatStatusInformation(theme: theme),
           verticalSpace(50),
           SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -206,20 +208,25 @@ class _SeatBookingPageState extends ConsumerState<SeatBookingPage> {
               textBaseline: TextBaseline.ideographic,
               children: [
                 buildSeatRow(leftRightRows, leftRightColumns,
-                    isMiddle: false, isLeft: true),
+                    isMiddle: false, isLeft: true, theme: theme),
                 const SizedBox(
                   width: 50,
                 ),
-                buildSeatRow(middleRows, middleColumns, isMiddle: true),
+                buildSeatRow(middleRows, middleColumns,
+                    isMiddle: true, theme: theme),
                 const SizedBox(
                   width: 50,
                 ),
-                buildSeatRow(leftRightRows, leftRightColumns,
-                    isMiddle: false, isLeft: false),
+                buildSeatRow(
+                    theme: theme,
+                    leftRightRows,
+                    leftRightColumns,
+                    isMiddle: false,
+                    isLeft: false),
               ],
             ),
           ),
-          verticalSpace(80),
+          verticalSpace(60),
           ...screenWidget(),
           verticalSpace(30),
           Text(
@@ -233,44 +240,35 @@ class _SeatBookingPageState extends ConsumerState<SeatBookingPage> {
           verticalSpace(30),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: saffron,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  )),
-              onPressed: () {
-                if (selectedSeats.isNotEmpty) {
-                  var updatetransaction = transaction.copyWith(
-                      seat: (selectedSeats..sort())
-                          .map(
-                            (e) => e,
-                          )
-                          .toList(),
-                      ticketAmount: selectedSeats.length,
-                      ticketPrcie: 30000);
-                  ref.read(routerProvider).pushNamed('confirmation',
-                      extra: (movieDetail, updatetransaction));
-                } else {
-                  context.showSnackbar(
-                      'Anda belum memilih kursi', SnackBarType.error);
-                }
-              },
-              child: const Text(
-                'Next',
-                style:
-                    TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+            child: SizedBox(
+              width: double.infinity,
+              child: CustomElevatedButton(
+                buttonType: ButtonType.medium,
+                text: 'Next',
+                buttonColor: theme.colorScheme.primary,
+                onPressed: () {
+                  if (selectedSeats.isNotEmpty) {
+                    var updatetransaction = transaction.copyWith(
+                        seat: (selectedSeats..sort()).map((e) => e).toList(),
+                        ticketAmount: selectedSeats.length,
+                        ticketPrcie: 30000);
+                    ref.read(routerProvider).pushNamed('confirmation',
+                        extra: (movieDetail, updatetransaction));
+                  } else {
+                    context.showSnackbar(
+                        'Please choose a seat first', SnackBarType.error);
+                  }
+                },
               ),
             ),
-          )
+          ),
+          verticalSpace(30),
         ],
       ),
     );
   }
 
-  Widget buildSeat(
-    String seatId,
-  ) {
+  Widget buildSeat(String seatId, {required ThemeData theme}) {
     bool isEnable = seatAvailability[seatId] ?? true; // Ambil status dari map
     bool isSelected = selectedSeats.contains(seatId);
 
@@ -294,7 +292,7 @@ class _SeatBookingPageState extends ConsumerState<SeatBookingPage> {
           decoration: BoxDecoration(
             color: isEnable
                 ? isSelected
-                    ? saffron
+                    ? theme.colorScheme.primary
                     : Colors.white
                 : Colors.grey,
             borderRadius: BorderRadius.circular(10),
@@ -302,10 +300,10 @@ class _SeatBookingPageState extends ConsumerState<SeatBookingPage> {
           child: Center(
             child: Text(
               seatId,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.black,
+                color: isSelected ? Colors.white : Colors.black,
               ),
             ),
           ),
@@ -319,6 +317,7 @@ class _SeatBookingPageState extends ConsumerState<SeatBookingPage> {
     int columns, {
     bool isMiddle = false,
     bool isLeft = false,
+    required ThemeData theme,
   }) {
     List<Widget> seatRows = [];
 
@@ -337,7 +336,7 @@ class _SeatBookingPageState extends ConsumerState<SeatBookingPage> {
 
         // Tentukan secara acak apakah kursi ini tersedia atau tidak
 
-        seatRow.add(buildSeat(seatId));
+        seatRow.add(buildSeat(seatId, theme: theme));
         seatNumber++;
       }
 

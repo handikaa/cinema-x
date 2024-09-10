@@ -1,14 +1,15 @@
-import '../../../domain/movie_detail.dart';
-import '../../../domain/transaction.dart';
-import '../../extensions/build_extension_context.dart';
-import '../../providers/user_data_provider/user_data_provider.dart';
-import '../../widgets/back_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import '../../misc/constants.dart';
+
+import '../../../domain/movie_detail.dart';
+import '../../../domain/transaction.dart';
+import '../../extensions/build_extension_context.dart';
 import '../../misc/method.dart';
 import '../../providers/router/page_routes.dart';
+import '../../providers/user_data_provider/user_data_provider.dart';
+import '../../widgets/back_navigation_bar.dart';
+import '../../widgets/button/elevated_button_extra_lage.dart';
 import 'method/backdrop_image.dart';
 import 'method/theather.dart';
 
@@ -52,6 +53,8 @@ class _TimeBookingPageState extends ConsumerState<TimeBookingPage> {
   @override
   Widget build(BuildContext context) {
     double maxWidth = MediaQuery.of(context).size.width;
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
 
     return Scaffold(
       body: ListView(
@@ -66,11 +69,8 @@ class _TimeBookingPageState extends ConsumerState<TimeBookingPage> {
                   onTap: () => ref.read(routerProvider).pop(),
                 ),
                 verticalSpace(24),
-                Hero(
-                  tag: widget.movieDetail.title,
-                  child: backdropimage(maxWidth, context,
-                      movieDetail: widget.movieDetail),
-                ),
+                backdropimage(maxWidth, context,
+                    movieDetail: widget.movieDetail),
                 verticalSpace(24),
               ],
             ),
@@ -118,60 +118,50 @@ class _TimeBookingPageState extends ConsumerState<TimeBookingPage> {
           verticalSpace(24),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: saffron,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              onPressed: () {
-                DateTime now = DateTime.now();
-                int currentHour = now.hour;
-                DateTime today = DateTime(now.year, now.month, now.day);
-                if (selectedDate == null ||
-                    selectedTheater == null ||
-                    selectedhour == null) {
-                  context.showSnackbar(
-                      'Harap pilih waktu terlebih dahulu', SnackBarType.error);
-                  return;
-                }
+            child: SizedBox(
+              width: double.infinity,
+              child: CustomElevatedButton(
+                buttonType: ButtonType.medium,
+                text: 'Next',
+                buttonColor: theme.colorScheme.primary,
+                onPressed: () {
+                  DateTime now = DateTime.now();
+                  int currentHour = now.hour;
+                  DateTime today = DateTime(now.year, now.month, now.day);
+                  if (selectedDate == null ||
+                      selectedTheater == null ||
+                      selectedhour == null) {
+                    context.showSnackbar(
+                        'Please select the time', SnackBarType.error);
+                    return;
+                  }
 
-                // Validasi tanggal dan waktu
-                if (today == selectedDate && selectedhour! <= currentHour) {
-                  context.showSnackbar(
-                      'Waktu tidak valid, silahkan pilih waktu yang tersedia',
-                      SnackBarType.error);
-                  return;
-                }
+                  if (today == selectedDate && selectedhour! <= currentHour) {
+                    context.showSnackbar('Invalid Time', SnackBarType.error);
+                    return;
+                  }
 
-                Transaction transaction = Transaction(
-                  uid: ref.read(userDataProvider).value!.uid,
-                  title: widget.movieDetail.title,
-                  adminFee: 10000,
-                  total: 0,
-                  teatherName: selectedTheater,
-                  transactionImage: widget.movieDetail.posterPath,
-                  watchingTime: DateTime(
-                    selectedDate!.year,
-                    selectedDate!.month,
-                    selectedDate!.day,
-                    selectedhour!,
-                  ).millisecondsSinceEpoch,
-                );
+                  Transaction transaction = Transaction(
+                    uid: ref.read(userDataProvider).value!.uid,
+                    title: widget.movieDetail.title,
+                    adminFee: 10000,
+                    total: 0,
+                    teatherName: selectedTheater,
+                    transactionImage: widget.movieDetail.posterPath,
+                    watchingTime: DateTime(
+                      selectedDate!.year,
+                      selectedDate!.month,
+                      selectedDate!.day,
+                      selectedhour!,
+                    ).millisecondsSinceEpoch,
+                  );
 
-                ref.read(routerProvider).pushNamed('seatBooking',
-                    extra: (widget.movieDetail, transaction));
-              },
-              child: const Text(
-                'Next',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
+                  ref.read(routerProvider).pushNamed('seatBooking',
+                      extra: (widget.movieDetail, transaction));
+                },
               ),
             ),
-          )
+          ),
         ],
       ),
     );

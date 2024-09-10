@@ -1,4 +1,3 @@
-// ignore_for_file: no_logic_in_create_state
 import 'package:flix_id/domain/movie_detail.dart';
 import 'package:flix_id/domain/result.dart';
 import 'package:flix_id/domain/transaction.dart';
@@ -6,7 +5,6 @@ import 'package:flix_id/domain/usecase/create_transaction/create_transactio_para
 import 'package:flix_id/domain/usecase/create_transaction/create_transaction.dart';
 import 'package:flix_id/presentation/extensions/build_extension_context.dart';
 import 'package:flix_id/presentation/extensions/int_extension.dart';
-import 'package:flix_id/presentation/misc/constants.dart';
 import 'package:flix_id/presentation/providers/transaction_data_provider/transactio_data_provider.dart';
 import 'package:flix_id/presentation/providers/usecase/create_transaction.dart/create_transaction_provider.dart';
 import 'package:flix_id/presentation/providers/user_data_provider/user_data_provider.dart';
@@ -16,9 +14,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../misc/method.dart';
 import '../../providers/router/page_routes.dart';
 import '../../widgets/back_navigation_bar.dart';
+import '../../widgets/button/elevated_button_extra_lage.dart';
 import '../time_booking/method/backdrop_image.dart';
-import 'method/title_cinema.dart';
 import 'method/booking_information.dart';
+import 'method/title_cinema.dart';
 
 class BookingConfirmatioPage extends ConsumerStatefulWidget {
   final (MovieDetail, Transaction) transactionDetail;
@@ -39,6 +38,7 @@ class _BookingConfirmatioPageState
   @override
   Widget build(BuildContext context) {
     double maxWidth = MediaQuery.of(context).size.width;
+    final theme = Theme.of(context);
 
     var (movieDetail, transaction) = transactionDetail;
     transaction = transaction.copyWith(
@@ -127,36 +127,27 @@ class _BookingConfirmatioPageState
                 ),
                 verticalSpace(10),
                 balanceInfo(ref, context, lastBalance.toIdrCurrencyFormat()),
-                verticalSpace(60),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: isLoading
-                        ? () {}
-                        : () {
-                            createTransaction();
-                            print('di klik');
-                          },
-                    style: ElevatedButton.styleFrom(
-                        foregroundColor: backgroundColor,
-                        backgroundColor: saffron,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10))),
-                    child: isLoading
-                        ? const CircularProgressIndicator(
-                            color: Colors.white,
-                          )
-                        : const Text(
-                            'Pay Now',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
-                          ),
+                verticalSpace(40),
+                if (isLoading) CircularProgressIndicator(),
+                if (!isLoading)
+                  SizedBox(
+                    width: double.infinity,
+                    child: CustomElevatedButton(
+                      buttonType: ButtonType.medium,
+                      text: 'Next',
+                      buttonColor: theme.colorScheme.primary,
+                      onPressed: isLoading
+                          ? () {}
+                          : () {
+                              createTransaction();
+                              print('di klik');
+                            },
+                    ),
                   ),
-                ),
               ],
             ),
           ),
+          verticalSpace(40),
         ],
       ),
     );

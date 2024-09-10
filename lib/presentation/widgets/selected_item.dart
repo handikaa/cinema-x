@@ -17,6 +17,8 @@ class SeletedItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
     return ConstrainedBox(
       constraints: const BoxConstraints(minWidth: 100),
       child: GestureDetector(
@@ -28,8 +30,8 @@ class SeletedItem extends StatelessWidget {
           decoration: BoxDecoration(
             color: isAvailable
                 ? isSelect
-                    ? saffron.withOpacity(0.9)
-                    : saffron.withOpacity(0.3)
+                    ? theme.colorScheme.primary.withOpacity(0.8)
+                    : theme.colorScheme.primary.withOpacity(0.2)
                 : Colors.grey,
             borderRadius: BorderRadius.circular(10),
             border: Border.all(color: Colors.black45, width: 2),
@@ -37,7 +39,9 @@ class SeletedItem extends StatelessWidget {
           child: Text(
             text,
             style: TextStyle(
-                color: isSelect ? Colors.black : ghostWhite, fontSize: 14),
+                color: textTheme.bodySmall!.backgroundColor,
+                fontSize: 14,
+                fontWeight: bold),
           ),
         ),
       ),

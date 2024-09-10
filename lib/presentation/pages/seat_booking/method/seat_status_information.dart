@@ -1,8 +1,10 @@
-import '../../../misc/constants.dart';
-import '../../../misc/method.dart';
 import 'package:flutter/material.dart';
 
-Widget seatStatusInformation({double width = 30, double height = 30}) => Row(
+import '../../../misc/method.dart';
+
+Widget seatStatusInformation(
+        {double width = 30, double height = 30, required ThemeData theme}) =>
+    Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
@@ -43,7 +45,7 @@ Widget seatStatusInformation({double width = 30, double height = 30}) => Row(
           width: width,
           height: height,
           decoration: BoxDecoration(
-            color: saffron,
+            color: theme.colorScheme.primary,
             borderRadius: BorderRadius.circular(5),
           ),
         ),

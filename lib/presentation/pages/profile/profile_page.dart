@@ -1,60 +1,47 @@
-import '../../misc/method.dart';
-import 'method/profile_item.dart';
-import 'method/user_info.dart';
-import '../../providers/transaction_data_provider/transactio_data_provider.dart';
-import '../../providers/user_data_provider/user_data_provider.dart';
+import 'package:flix_id/presentation/pages/profile/method/generals_items.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../providers/router/page_routes.dart';
+import '../../misc/constants.dart';
+import '../../misc/method.dart';
+import '../../providers/user_data_provider/user_data_provider.dart';
+import '../../widgets/button/elevated_button_extra_lage.dart';
+import 'method/account_items.dart';
+import 'method/more_items.dart';
+import 'method/user_info.dart';
 
 class ProfilePage extends ConsumerWidget {
   const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.all(24),
       child: ListView(
         children: [
-          ...userInfo(ref),
-          const Divider(),
+          ...userInfo(ref, theme),
           verticalSpace(20),
-          profileItem(
-            'Update Profile',
-            onTap: () => ref.read(routerProvider).pushNamed('update-profile'),
-          ),
           verticalSpace(20),
-          profileItem(
-            'My Wallet',
-            onTap: () => ref.read(routerProvider).pushNamed('wallet-page'),
-          ),
+          accountItems(ref),
           verticalSpace(20),
-          profileItem('Change Password'),
+          genenralItems(ref),
           verticalSpace(20),
-          profileItem('Change Language'),
-          verticalSpace(20),
-          const Divider(),
-          verticalSpace(20),
-          profileItem('Contact Us'),
-          verticalSpace(20),
-          profileItem('Privacy Policy'),
-          verticalSpace(20),
-          profileItem('Terms and Condition'),
-          verticalSpace(60),
+          moreItems(ref),
+          verticalSpace(30),
           switch (ref.watch(userDataProvider)) {
             AsyncData(:final value) => value != null
                 ? SizedBox(
                     width: double.infinity,
-                    child: ElevatedButton(
-                        onPressed: () {
-                          // ref.invalidate(transactioDataProvider);
-                          ref.read(userDataProvider.notifier).logout();
-                        },
-                        child: const Text(
-                          'Logout',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        )),
+                    child: CustomElevatedButton(
+                      buttonType: ButtonType.extraLarge,
+                      text: 'Logout',
+                      buttonColor: ThemeColor.red,
+                      onPressed: () {
+                        // ref.invalidate(transactioDataProvider);
+                        ref.read(userDataProvider.notifier).logout();
+                      },
+                    ),
                   )
                 : const Center(
                     child: CircularProgressIndicator(),
@@ -63,18 +50,6 @@ class ProfilePage extends ConsumerWidget {
                 child: CircularProgressIndicator(),
               ),
           },
-          // SizedBox(
-          //   width: double.infinity,
-          //   child: ElevatedButton(
-          //       onPressed: () {
-          //         ref.invalidate(transactioDataProvider);
-          //         ref.read(userDataProvider.notifier).logout();
-          //       },
-          //       child: const Text(
-          //         'Logout',
-          //         style: TextStyle(fontWeight: FontWeight.bold),
-          //       )),
-          // ),
           verticalSpace(20),
           const Text(
             'version 0.1',
@@ -83,7 +58,7 @@ class ProfilePage extends ConsumerWidget {
             ),
             textAlign: TextAlign.center,
           ),
-          verticalSpace(50)
+          verticalSpace(100)
         ],
       ),
     );

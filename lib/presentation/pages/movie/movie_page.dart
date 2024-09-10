@@ -1,12 +1,14 @@
-import '../../misc/method.dart';
-import 'method/promotion_list.dart';
-import '../../providers/movie/now_playing_provider.dart';
-import '../../providers/movie/upcoming_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../misc/assets.dart';
+import '../../misc/method.dart';
+import '../../providers/movie/now_playing_provider.dart';
+import '../../providers/movie/upcoming_provider.dart';
 import '../../providers/router/page_routes.dart';
+import 'method/movie_carousel.dart';
 import 'method/movie_list.dart';
+import 'method/promotion_list.dart';
 import 'method/search_bar.dart';
 import 'method/user_info.dart';
 
@@ -18,6 +20,8 @@ class MoviePage extends ConsumerStatefulWidget {
 }
 
 class _MoviePageState extends ConsumerState<MoviePage> {
+  int indexMovie = 0;
+
   // @override
   // void initState() {
   //   super.initState();
@@ -51,6 +55,8 @@ class _MoviePageState extends ConsumerState<MoviePage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
     List<String> promotionImage = [
       promoImage1,
       promoImage2,
@@ -65,16 +71,23 @@ class _MoviePageState extends ConsumerState<MoviePage> {
           children: [
             userInfo(ref, context),
             verticalSpace(40),
-            searchBar(context),
+            searchBar(context, theme),
             verticalSpace(40),
-            ...movieList(
+            ...movieCarousel(
+              movieIndex: indexMovie,
+              onPageChanged: (index, reason) {
+                setState(() {
+                  indexMovie = index;
+                });
+              },
               title: 'Now Playing',
               movies: ref.watch(nowPlayingProvider),
               onTap: (movie) {
                 ref.read(routerProvider).pushNamed('detailMovie', extra: movie);
               },
+              textTheme: textTheme,
             ),
-            verticalSpace(40),
+            verticalSpace(20),
             ...promotionList(promotionImage),
             verticalSpace(40),
             ...movieList(

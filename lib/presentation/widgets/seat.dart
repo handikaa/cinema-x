@@ -29,14 +29,14 @@ class Seat extends StatelessWidget {
               ? Colors.white
               : status == SeatStatus.reserved
                   ? Colors.grey
-                  : saffron,
+                  : ThemeColor.orange,
           borderRadius: BorderRadius.circular(5),
         ),
         child: Center(
           child: Text(
             '${number ?? ''}',
             style: const TextStyle(
-                color: backgroundColor, fontWeight: FontWeight.bold),
+                color: ThemeColor.darkBackground, fontWeight: FontWeight.bold),
           ),
         ),
       ),

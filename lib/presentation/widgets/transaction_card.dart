@@ -1,10 +1,9 @@
-import 'package:flix_id/data/dio_client/api_constant.dart';
-import 'package:flix_id/domain/transaction.dart';
-import 'package:flix_id/presentation/extensions/int_extension.dart';
-import 'package:flix_id/presentation/misc/method.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../../data/dio_client/api_constant.dart';
+import '../../domain/transaction.dart';
+import '../extensions/int_extension.dart';
 import '../misc/assets.dart';
 
 class TransactionCard extends StatelessWidget {

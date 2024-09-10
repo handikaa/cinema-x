@@ -1,17 +1,20 @@
 import 'dart:io';
 
-import '../../../domain/user.dart';
-import '../../extensions/build_extension_context.dart';
-import '../../misc/constants.dart';
-import '../../providers/router/page_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../domain/user.dart';
+import '../../extensions/build_extension_context.dart';
+import '../../misc/assets_location.dart';
+import '../../misc/constants.dart';
 import '../../misc/method.dart';
+import '../../providers/router/page_routes.dart';
 import '../../providers/user_data_provider/user_data_provider.dart';
+import '../../widgets/button/elevated_button_extra_lage.dart';
 import '../../widgets/textfield.dart';
+import '../welcome_page/method/login_route.dart';
 
 class RegisterPage extends ConsumerStatefulWidget {
   const RegisterPage({super.key});
@@ -34,7 +37,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
       uiSettings: [
         AndroidUiSettings(
           toolbarTitle: 'Flix Id',
-          toolbarColor: backgroundColor,
+          toolbarColor: ThemeColor.darkBackground,
           toolbarWidgetColor: Colors.white,
           lockAspectRatio: true,
           cropStyle: CropStyle.circle,
@@ -72,6 +75,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
     ref.listen(
       userDataProvider,
       (previous, next) async {
@@ -92,9 +97,17 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
         children: [
           verticalSpace(50),
           Center(
-            child: Image.asset(
-              'assets/images/flix_logo.png',
-              width: 150,
+            child: Column(
+              children: [
+                Image(
+                  image: AssetsLocation.imageLocation('logo'),
+                  width: 88,
+                ),
+                Text(
+                  'CINEMAX',
+                  style: textTheme.headlineLarge,
+                ),
+              ],
             ),
           ),
           verticalSpace(50),
@@ -177,46 +190,44 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                   AsyncData(:final value) => value == null
                       ? SizedBox(
                           width: double.infinity,
-                          child: ElevatedButton(
-                              onPressed: () async {
-                                if (nameC.text.isNotEmpty &&
-                                    passC.text.isNotEmpty &&
-                                    nameC.text.isNotEmpty) {
-                                  if (passC.text == confirmPassC.text) {
+                          child: CustomElevatedButton(
+                            text: 'Sign Up',
+                            onPressed: () async {
+                              if (nameC.text.isNotEmpty &&
+                                  passC.text.isNotEmpty &&
+                                  nameC.text.isNotEmpty) {
+                                if (passC.text == confirmPassC.text) {
+                                  await ref
+                                      .read(userDataProvider.notifier)
+                                      .register(
+                                        email: emailC.text,
+                                        password: passC.text,
+                                        name: nameC.text,
+                                      );
+                                  if (xfile != null) {
+                                    User? user =
+                                        ref.read(userDataProvider).valueOrNull;
+
                                     await ref
                                         .read(userDataProvider.notifier)
-                                        .register(
-                                          email: emailC.text,
-                                          password: passC.text,
-                                          name: nameC.text,
+                                        .uploadProfilePicture(
+                                          user: user!,
+                                          image: File(xfile!.path),
                                         );
-                                    if (xfile != null) {
-                                      User? user = ref
-                                          .read(userDataProvider)
-                                          .valueOrNull;
-
-                                      await ref
-                                          .read(userDataProvider.notifier)
-                                          .uploadProfilePicture(
-                                            user: user!,
-                                            image: File(xfile!.path),
-                                          );
-                                    }
-                                  } else {
-                                    context.showSnackbar(
-                                        'Password doesn\'t match',
-                                        SnackBarType.error);
                                   }
                                 } else {
                                   context.showSnackbar(
-                                      'Form tidak boleh kosong',
+                                      'Password doesn\'t match',
                                       SnackBarType.error);
                                 }
-                              },
-                              child: const Text(
-                                'Register',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              )),
+                              } else {
+                                context.showSnackbar(
+                                    'Form fields cannot be empty!',
+                                    SnackBarType.error);
+                              }
+                            },
+                            buttonType: ButtonType.extraLarge,
+                          ),
                         )
                       : const Center(
                           child: CircularProgressIndicator(),
@@ -226,20 +237,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                     ),
                 },
                 verticalSpace(24),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text("Already have an account? "),
-                    TextButton(
-                        onPressed: () {
-                          ref.read(routerProvider).goNamed('login');
-                        },
-                        child: const Text(
-                          'Login here',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ))
-                  ],
-                )
+                loginRoute(textTheme, ref, theme),
               ],
             ),
           ),

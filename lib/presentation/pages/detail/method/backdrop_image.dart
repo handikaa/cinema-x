@@ -40,41 +40,13 @@ Future<void> _dialogBuilder(BuildContext context) {
   );
 }
 
-Stack backDropImage(double maxWidth, AsyncValue<MovieDetail?> asyncMovieDetail,
+Widget backDropImage(double maxWidth, AsyncValue<MovieDetail?> asyncMovieDetail,
     BuildContext context) {
-  return Stack(
-    children: [
-      NetworkImageCard(
-          width: maxWidth - 48,
-          height: (maxWidth - 48) * 0.6,
-          imageUrl: asyncMovieDetail.valueOrNull != null
-              ? '${ApiConstant.baseUrlImage}${asyncMovieDetail.value!.backdropPath ?? asyncMovieDetail.value!.posterPath}'
-              : null,
-          title: ''),
-      SizedBox(
-        width: maxWidth - 48,
-        height: (maxWidth - 48) * 0.6,
-        child: Align(
-          alignment: Alignment.center,
-          child: Container(
-            width: 100,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.white.withOpacity(0.7),
-              border: Border.all(color: Colors.black, width: 2),
-            ),
-            child: IconButton(
-                onPressed: () {
-                  _dialogBuilder(context);
-                },
-                icon: const Icon(
-                  Icons.play_arrow,
-                  size: 50,
-                  color: Colors.black,
-                )),
-          ),
-        ),
-      ),
-    ],
-  );
+  return NetworkImageCard(
+      height: maxWidth,
+      width: (maxWidth - 50) * 0.7,
+      imageUrl: asyncMovieDetail.valueOrNull != null
+          ? '${ApiConstant.baseUrlImage}${asyncMovieDetail.value!.posterPath ?? asyncMovieDetail.value!.backdropPath}'
+          : null,
+      title: '');
 }

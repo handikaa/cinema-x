@@ -9,8 +9,8 @@ extension BuildExtensionContext on BuildContext {
       SnackBar(
         content: Text(
           message,
-          style: TextStyle(
-            color: type == SnackBarType.error ? Colors.white : backgroundColor,
+          style: const TextStyle(
+            color: Colors.white,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -20,7 +20,8 @@ extension BuildExtensionContext on BuildContext {
           left: 10,
           right: 10,
         ),
-        backgroundColor: type == SnackBarType.error ? Colors.red : saffron,
+        backgroundColor:
+            type == SnackBarType.error ? Colors.red : ThemeColor.green,
       ),
     );
   }

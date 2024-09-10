@@ -1,4 +1,9 @@
+import 'package:flix_id/presentation/widgets/button/elevated_button_extra_lage.dart';
+
+import 'method/register_route.dart';
+
 import '../../extensions/build_extension_context.dart';
+import '../../misc/assets_location.dart';
 import '../../misc/method.dart';
 import '../../providers/router/page_routes.dart';
 import '../../providers/user_data_provider/user_data_provider.dart';
@@ -35,6 +40,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
     ref.listen(
       userDataProvider,
       (previous, next) {
@@ -63,9 +70,17 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         children: [
           verticalSpace(100),
           Center(
-            child: Image.asset(
-              'assets/images/flix_logo.png',
-              width: 150,
+            child: Column(
+              children: [
+                Image(
+                  image: AssetsLocation.imageLocation('logo'),
+                  width: 88,
+                ),
+                Text(
+                  'CINEMAX',
+                  style: textTheme.headlineLarge,
+                ),
+              ],
             ),
           ),
           verticalSpace(100),
@@ -109,57 +124,43 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   ],
                 ),
                 verticalSpace(24),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: ref.watch(userDataProvider).maybeWhen(
-                          data: (_) => () {
-                            FocusScope.of(context).unfocus();
+                switch (ref.watch(userDataProvider)) {
+                  AsyncData(:final value) => value == null
+                      ? SizedBox(
+                          width: double.infinity,
+                          child: CustomElevatedButton(
+                            buttonType: ButtonType.extraLarge,
+                            text: 'Sign In',
+                            onPressed: ref.watch(userDataProvider).maybeWhen(
+                                  data: (_) => () {
+                                    FocusScope.of(context).unfocus();
 
-                            if (emailC.text.isNotEmpty &&
-                                passC.text.isNotEmpty) {
-                              saveRemember();
-                              ref.read(userDataProvider.notifier).login(
-                                  email: emailC.text, password: passC.text);
-                            } else {
-                              context.showSnackbar(
-                                  'Email dan Password tidak boleh kosong',
-                                  SnackBarType.error);
-                            }
-                          },
-                          orElse: () =>
-                              null, // Disable button during loading or error
+                                    if (emailC.text.isNotEmpty &&
+                                        passC.text.isNotEmpty) {
+                                      saveRemember();
+                                      ref.read(userDataProvider.notifier).login(
+                                          email: emailC.text,
+                                          password: passC.text);
+                                    } else {
+                                      context.showSnackbar(
+                                          'Email and Password cannot be empty!',
+                                          SnackBarType.error);
+                                    }
+                                  },
+                                  orElse: () =>
+                                      null, // Disable button during loading or error
+                                ),
+                          ),
+                        )
+                      : const Center(
+                          child: CircularProgressIndicator(),
                         ),
-                    child: ref.watch(userDataProvider).when(
-                          data: (_) => const Text(
-                            'Login',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          loading: () => const CircularProgressIndicator(
-                            color: Colors.white,
-                          ),
-                          error: (error, stackTrace) => const Text(
-                            'Login',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                  ),
-                ),
+                  _ => const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                },
                 verticalSpace(24),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text("Don't have an account? "),
-                    TextButton(
-                        onPressed: () {
-                          ref.read(routerProvider).goNamed('register');
-                        },
-                        child: const Text(
-                          'Register here',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ))
-                  ],
-                )
+                registerText(textTheme, ref, theme)
               ],
             ),
           ),

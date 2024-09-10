@@ -1,12 +1,14 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'data/di/inject_container.dart';
 import 'data/dio_client/api_constant.dart';
 import 'firebase_options.dart';
-import 'presentation/misc/constants.dart';
+import 'presentation/misc/theme/theme.dart';
 import 'presentation/providers/router/page_routes.dart';
-import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'presentation/providers/theme/theme_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,6 +16,11 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+    ),
+  );
   await init(
     baseUrl: ApiConstant.baseUrlMovie,
   );
@@ -27,23 +34,12 @@ class MyApp extends ConsumerWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeProvider);
+
     return MaterialApp.router(
-      theme: ThemeData.from(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: saffron,
-          brightness: Brightness.dark,
-          surface: backgroundColor,
-        ),
-        useMaterial3: true,
-        textTheme: TextTheme(
-          bodyMedium: GoogleFonts.poppins(
-            color: ghostWhite,
-          ), // untuk default text
-          bodyLarge:
-              GoogleFonts.poppins(color: ghostWhite), // untuk text di textfield
-          labelLarge: GoogleFonts.poppins(color: ghostWhite), // untuk button
-        ),
-      ),
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      themeMode: themeMode,
       debugShowCheckedModeBanner: false,
       routeInformationParser: ref.watch(routerProvider).routeInformationParser,
       routeInformationProvider:
